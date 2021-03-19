@@ -27,18 +27,21 @@
 //[/MiscUserDefs]
 
 //==============================================================================
-Editor::Editor (WAVEPANNERAudioProcessor& p)
-    : AudioProcessorEditor(&p), processor(p)
+Editor::Editor (WAVEPANNERAudioProcessor& p,  juce::AudioProcessorValueTreeState& vts)
+    : AudioProcessorEditor(&p), processor(p),valueTreeState(vts)
 {
     //[Constructor_pre] You can add your own custom stuff here..
     //[/Constructor_pre]
+
+    waveView.reset (new WaveView());
+    addAndMakeVisible (waveView.get());
+    waveView->setBounds (26, 158, 288, 161);
 
     defaultKnob.reset (new juce::Slider ("default"));
     addAndMakeVisible (defaultKnob.get());
     defaultKnob->setRange (-1, 1, 0.01);
     defaultKnob->setSliderStyle (juce::Slider::Rotary);
     defaultKnob->setTextBoxStyle (juce::Slider::TextBoxBelow, false, 50, 16);
-    defaultKnob->addListener (this);
 
     defaultKnob->setBounds (46, 374, 50, 70);
 
@@ -47,7 +50,6 @@ Editor::Editor (WAVEPANNERAudioProcessor& p)
     speedKnob->setRange (0.1, 4, 0.05);
     speedKnob->setSliderStyle (juce::Slider::Rotary);
     speedKnob->setTextBoxStyle (juce::Slider::TextBoxBelow, false, 50, 16);
-    speedKnob->addListener (this);
 
     speedKnob->setBounds (145, 374, 50, 70);
 
@@ -56,7 +58,6 @@ Editor::Editor (WAVEPANNERAudioProcessor& p)
     mixKnob->setRange (0, 100, 0.1);
     mixKnob->setSliderStyle (juce::Slider::Rotary);
     mixKnob->setTextBoxStyle (juce::Slider::TextBoxBelow, false, 50, 16);
-    mixKnob->addListener (this);
 
     mixKnob->setBounds (245, 374, 50, 70);
 
@@ -65,7 +66,6 @@ Editor::Editor (WAVEPANNERAudioProcessor& p)
     curveKnob->setRange (0, 2, 0.1);
     curveKnob->setSliderStyle (juce::Slider::Rotary);
     curveKnob->setTextBoxStyle (juce::Slider::TextBoxBelow, false, 50, 16);
-    curveKnob->addListener (this);
 
     curveKnob->setBounds (72, 565, 50, 70);
 
@@ -74,13 +74,8 @@ Editor::Editor (WAVEPANNERAudioProcessor& p)
     offsetKnob->setRange (0, 1, 0.05);
     offsetKnob->setSliderStyle (juce::Slider::Rotary);
     offsetKnob->setTextBoxStyle (juce::Slider::TextBoxBelow, false, 50, 16);
-    offsetKnob->addListener (this);
 
     offsetKnob->setBounds (218, 565, 50, 70);
-
-    waveView.reset (new WaveView());
-    addAndMakeVisible (waveView.get());
-    waveView->setBounds (26, 158, 288, 161);
 
     extendToggle.reset (new juce::ImageButton ("extendToggle"));
     addAndMakeVisible (extendToggle.get());
@@ -105,42 +100,46 @@ Editor::Editor (WAVEPANNERAudioProcessor& p)
     //[Constructor] You can add your own custom stuff here..
     startTimerHz(60);
 
+    defaultAttachment.reset(new KnobAttachment(valueTreeState, "DEFAULT", *defaultKnob.get()));
+    speedAttachment.reset(new KnobAttachment(valueTreeState, "SPEED", *speedKnob.get()));
+    mixAttachment.reset(new KnobAttachment(valueTreeState, "MIX", *mixKnob.get()));
+    curveAttachment.reset(new KnobAttachment(valueTreeState, "CURVE", *curveKnob.get()));
+    offsetAttachment.reset(new KnobAttachment(valueTreeState, "OFFSET", *offsetKnob.get()));
+
     defaultKnob->setLookAndFeel(&knob);
-    defaultKnob->setValue(0.0);
-    processor.wavePanner.setDefaultPan(defaultKnob->getValue());
     speedKnob->setLookAndFeel(&knob);
-    speedKnob->setValue(0.5);
-    processor.wavePanner.setSpeed(speedKnob->getValue());
     mixKnob->setLookAndFeel(&knob);
-    mixKnob->setValue(100.0);
     mixKnob->setTextValueSuffix("%");
-    processor.wavePanner.setMix(mixKnob->getValue());
     curveKnob->setLookAndFeel(&knob);
-    curveKnob->setValue(1.0);
-    processor.wavePanner.setCurve(curveKnob->getValue());
     offsetKnob->setLookAndFeel(&knob);
-    offsetKnob->setValue(0.0);
-    processor.wavePanner.setOffset(offsetKnob->getValue());
+
     extendToggle->setClickingTogglesState(true);
     extendToggle->setLookAndFeel(&extendToggleLookAndFeel);
+
     //[/Constructor]
 }
 
 Editor::~Editor()
 {
     //[Destructor_pre]. You can add your own custom destruction code here..
+    defaultAttachment = nullptr;
+    speedAttachment = nullptr;
+    mixAttachment = nullptr;
+    curveAttachment = nullptr;
+    offsetAttachment = nullptr;
     //[/Destructor_pre]
 
+    waveView = nullptr;
     defaultKnob = nullptr;
     speedKnob = nullptr;
     mixKnob = nullptr;
     curveKnob = nullptr;
     offsetKnob = nullptr;
-    waveView = nullptr;
     extendToggle = nullptr;
 
 
     //[Destructor]. You can add your own custom destruction code here..
+    stopTimer();
     //[/Destructor]
 }
 
@@ -173,46 +172,6 @@ void Editor::resized()
 
     //[UserResized] Add your own custom resize handling here..
     //[/UserResized]
-}
-
-void Editor::sliderValueChanged (juce::Slider* sliderThatWasMoved)
-{
-    //[UsersliderValueChanged_Pre]
-    //[/UsersliderValueChanged_Pre]
-
-    if (sliderThatWasMoved == defaultKnob.get())
-    {
-        //[UserSliderCode_defaultKnob] -- add your slider handling code here..
-        processor.wavePanner.setDefaultPan(defaultKnob->getValue());
-        //[/UserSliderCode_defaultKnob]
-    }
-    else if (sliderThatWasMoved == speedKnob.get())
-    {
-        //[UserSliderCode_speedKnob] -- add your slider handling code here..
-        processor.wavePanner.setSpeed(speedKnob->getValue());
-        //[/UserSliderCode_speedKnob]
-    }
-    else if (sliderThatWasMoved == mixKnob.get())
-    {
-        //[UserSliderCode_mixKnob] -- add your slider handling code here..
-        processor.wavePanner.setMix(mixKnob->getValue());
-        //[/UserSliderCode_mixKnob]
-    }
-    else if (sliderThatWasMoved == curveKnob.get())
-    {
-        //[UserSliderCode_curveKnob] -- add your slider handling code here..
-        processor.wavePanner.setCurve(curveKnob->getValue());
-        //[/UserSliderCode_curveKnob]
-    }
-    else if (sliderThatWasMoved == offsetKnob.get())
-    {
-        //[UserSliderCode_offsetKnob] -- add your slider handling code here..
-        processor.wavePanner.setOffset(offsetKnob->getValue());
-        //[/UserSliderCode_offsetKnob]
-    }
-
-    //[UsersliderValueChanged_Post]
-    //[/UsersliderValueChanged_Post]
 }
 
 void Editor::buttonClicked (juce::Button* buttonThatWasClicked)
@@ -260,37 +219,38 @@ BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="Editor" componentName=""
                  parentClasses="public juce::AudioProcessorEditor, private juce::Timer"
-                 constructorParams="WAVEPANNERAudioProcessor&amp; p" variableInitialisers="AudioProcessorEditor(&amp;p), processor(p)"
+                 constructorParams="WAVEPANNERAudioProcessor&amp; p,  juce::AudioProcessorValueTreeState&amp; vts"
+                 variableInitialisers="AudioProcessorEditor(&amp;p), processor(p),valueTreeState(vts)&#10;"
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
-                 fixedSize="0" initialWidth="340" initialHeight="537">
+                 fixedSize="1" initialWidth="340" initialHeight="537">
   <BACKGROUND backgroundColour="ff323e44">
     <IMAGE pos="0 0 340 660" resource="bg_png" opacity="1.0" mode="0"/>
   </BACKGROUND>
-  <SLIDER name="default" id="91354aa25899adea" memberName="defaultKnob"
+  <JUCERCOMP name="waveView" id="2531d2300eddb7d8" memberName="waveView" virtualName="WaveView"
+             explicitFocusOrder="0" pos="26 158 288 161" sourceFile="WaveView.h"
+             constructorParams=""/>
+  <SLIDER name="default" id="53cb8c0ecbfe8aef" memberName="defaultKnob"
           virtualName="" explicitFocusOrder="0" pos="46 374 50 70" min="-1.0"
           max="1.0" int="0.01" style="Rotary" textBoxPos="TextBoxBelow"
           textBoxEditable="1" textBoxWidth="50" textBoxHeight="16" skewFactor="1.0"
-          needsCallback="1"/>
-  <SLIDER name="speed" id="c73084d54ed9a99e" memberName="speedKnob" virtualName=""
+          needsCallback="0"/>
+  <SLIDER name="speed" id="4a9d9fe27316a8ad" memberName="speedKnob" virtualName=""
           explicitFocusOrder="0" pos="145 374 50 70" min="0.1" max="4.0"
           int="0.05" style="Rotary" textBoxPos="TextBoxBelow" textBoxEditable="1"
-          textBoxWidth="50" textBoxHeight="16" skewFactor="1.0" needsCallback="1"/>
-  <SLIDER name="mix" id="f3482d17bc65fec8" memberName="mixKnob" virtualName=""
+          textBoxWidth="50" textBoxHeight="16" skewFactor="1.0" needsCallback="0"/>
+  <SLIDER name="mix" id="d28770a02b03e2be" memberName="mixKnob" virtualName=""
           explicitFocusOrder="0" pos="245 374 50 70" min="0.0" max="100.0"
           int="0.1" style="Rotary" textBoxPos="TextBoxBelow" textBoxEditable="1"
-          textBoxWidth="50" textBoxHeight="16" skewFactor="1.0" needsCallback="1"/>
-  <SLIDER name="curve" id="4c5d16d98bb2467a" memberName="curveKnob" virtualName=""
+          textBoxWidth="50" textBoxHeight="16" skewFactor="1.0" needsCallback="0"/>
+  <SLIDER name="curve" id="ecd47955112579d0" memberName="curveKnob" virtualName=""
           explicitFocusOrder="0" pos="72 565 50 70" min="0.0" max="2.0"
           int="0.1" style="Rotary" textBoxPos="TextBoxBelow" textBoxEditable="1"
-          textBoxWidth="50" textBoxHeight="16" skewFactor="1.0" needsCallback="1"/>
-  <SLIDER name="offset" id="c0856a33e6b27ced" memberName="offsetKnob" virtualName=""
+          textBoxWidth="50" textBoxHeight="16" skewFactor="1.0" needsCallback="0"/>
+  <SLIDER name="offset" id="75ebbd4e0571119b" memberName="offsetKnob" virtualName=""
           explicitFocusOrder="0" pos="218 565 50 70" min="0.0" max="1.0"
           int="0.05" style="Rotary" textBoxPos="TextBoxBelow" textBoxEditable="1"
-          textBoxWidth="50" textBoxHeight="16" skewFactor="1.0" needsCallback="1"/>
-  <JUCERCOMP name="waveView" id="c9fcf5a8d32ee352" memberName="waveView" virtualName="WaveView"
-             explicitFocusOrder="0" pos="26 158 288 161" sourceFile="WaveView.h"
-             constructorParams=""/>
-  <IMAGEBUTTON name="extendToggle" id="82501a8c66b95802" memberName="extendToggle"
+          textBoxWidth="50" textBoxHeight="16" skewFactor="1.0" needsCallback="0"/>
+  <IMAGEBUTTON name="extendToggle" id="a81ff13a8a6c414b" memberName="extendToggle"
                virtualName="" explicitFocusOrder="0" pos="164 497 12 12" buttonText="new button"
                connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"
                resourceNormal="extendToggle_png" opacityNormal="1.0" colourNormal="0"

@@ -25,6 +25,9 @@
 #include "Knob.h"
 #include "ExtendToggle.h"
 #include "AnimatorByCount.h"
+
+typedef juce::AudioProcessorValueTreeState::SliderAttachment KnobAttachment;
+
 //[/Headers]
 
 #include "WaveView.h"
@@ -40,12 +43,11 @@
 */
 class Editor  : public juce::AudioProcessorEditor,
                 private juce::Timer,
-                public juce::Slider::Listener,
                 public juce::Button::Listener
 {
 public:
     //==============================================================================
-    Editor (WAVEPANNERAudioProcessor& p);
+    Editor (WAVEPANNERAudioProcessor& p,  juce::AudioProcessorValueTreeState& vts);
     ~Editor() override;
 
     //==============================================================================
@@ -54,7 +56,6 @@ public:
 
     void paint (juce::Graphics& g) override;
     void resized() override;
-    void sliderValueChanged (juce::Slider* sliderThatWasMoved) override;
     void buttonClicked (juce::Button* buttonThatWasClicked) override;
 
     // Binary resources:
@@ -66,10 +67,17 @@ public:
 
 private:
     //[UserVariables]   -- You can add your own custom variables in this section.
-    void timerCallback();
+    void timerCallback() override;
 
     WAVEPANNERAudioProcessor& processor;
     Knob knob;
+
+    juce::AudioProcessorValueTreeState& valueTreeState;
+    std::unique_ptr<KnobAttachment> defaultAttachment;
+    std::unique_ptr<KnobAttachment> speedAttachment;
+    std::unique_ptr<KnobAttachment> mixAttachment;
+    std::unique_ptr<KnobAttachment> curveAttachment;
+    std::unique_ptr<KnobAttachment> offsetAttachment;
 
     // extendToggle
     ExtendToggle extendToggleLookAndFeel;
@@ -79,12 +87,12 @@ private:
     //[/UserVariables]
 
     //==============================================================================
+    std::unique_ptr<WaveView> waveView;
     std::unique_ptr<juce::Slider> defaultKnob;
     std::unique_ptr<juce::Slider> speedKnob;
     std::unique_ptr<juce::Slider> mixKnob;
     std::unique_ptr<juce::Slider> curveKnob;
     std::unique_ptr<juce::Slider> offsetKnob;
-    std::unique_ptr<WaveView> waveView;
     std::unique_ptr<juce::ImageButton> extendToggle;
     juce::Image cachedImage_bg_png_1;
 

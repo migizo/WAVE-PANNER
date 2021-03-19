@@ -1,54 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="MrwfMZ" name="WAVE PANNER" projectType="audioplug" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" bundleIdentifier="com.revista.wavePanner"
-              pluginManufacturer="REVISTA" pluginManufacturerCode="RVST" pluginCode="Wvpn"
-              aaxIdentifier="com.revista.wavePanner" pluginFormats="buildAU,buildVST3"
-              pluginName="WAVE PANNER" pluginDesc="WAVE PANNER" pluginAUExportPrefix="WAVEPANNERAU">
-  <MAINGROUP id="RE5bLN" name="WAVE PANNER">
-    <GROUP id="{EA8E3463-8F67-0960-025D-46E14F209F58}" name="ExtendToggle">
-      <FILE id="ozncaT" name="ExtendToggle.h" compile="0" resource="0" file="Source/ExtendToggle.h"/>
-    </GROUP>
-    <GROUP id="{08495EEA-CC5A-8373-D7BD-CEBEECE3A87C}" name="Knob">
-      <FILE id="T3ICX0" name="Knob.cpp" compile="1" resource="0" file="Source/Knob.cpp"/>
-      <FILE id="ayNQQt" name="Knob.h" compile="0" resource="0" file="Source/Knob.h"/>
-      <FILE id="azPE1d" name="KnobResource.h" compile="0" resource="0" file="Source/KnobResource.h"/>
-    </GROUP>
-    <GROUP id="{4AA9AD60-5010-06D8-B822-70EACC3B1A4B}" name="Source">
-      <FILE id="jGSyFL" name="PluginProcessor.cpp" compile="1" resource="0"
+<JUCERPROJECT id="HBZwBb" name="WAVE PANNER" projectType="audioplug" useAppConfig="0"
+              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" bundleIdentifier="com.revista.WAVEPANNER"
+              pluginFormats="buildAU,buildVST3" pluginName="WAVE PANNER" pluginDesc="WAVE PANNER"
+              pluginManufacturer="REVISTA" pluginManufacturerCode="RVST" pluginCode="Wvpr"
+              aaxIdentifier="com.revista.WAVEPANNER" pluginAUExportPrefix="WAVEPANNERAU">
+  <MAINGROUP id="ZtPXWq" name="WAVE PANNER">
+    <GROUP id="{012178F1-3819-AA8B-CE9A-8265788D6B2F}" name="Source">
+      <FILE id="Pi6yWf" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
-      <FILE id="awfNsc" name="PluginProcessor.h" compile="0" resource="0"
+      <FILE id="Qx4iYU" name="PluginProcessor.h" compile="0" resource="0"
             file="Source/PluginProcessor.h"/>
     </GROUP>
-    <FILE id="koTWIV" name="AnimatorByCount.h" compile="0" resource="0"
+    <FILE id="WnCTw7" name="AnimatorByCount.h" compile="0" resource="0"
           file="Source/AnimatorByCount.h"/>
-    <FILE id="MCZLF6" name="Editor.cpp" compile="1" resource="0" file="Source/Editor.cpp"/>
-    <FILE id="tkarQq" name="Editor.h" compile="0" resource="0" file="Source/Editor.h"/>
-    <FILE id="QeEUlN" name="WavePanner.h" compile="0" resource="0" file="Source/WavePanner.h"/>
-    <FILE id="FBzAes" name="WaveView.h" compile="0" resource="0" file="Source/WaveView.h"/>
+    <FILE id="iUl8LY" name="Editor.cpp" compile="1" resource="0" file="Source/Editor.cpp"/>
+    <FILE id="QeMLQ5" name="Editor.h" compile="0" resource="0" file="Source/Editor.h"/>
+    <FILE id="I6gBWm" name="ExtendToggle.h" compile="0" resource="0" file="Source/ExtendToggle.h"/>
+    <FILE id="QhDM6U" name="Knob.cpp" compile="1" resource="0" file="Source/Knob.cpp"/>
+    <FILE id="mrs60o" name="Knob.h" compile="0" resource="0" file="Source/Knob.h"/>
+    <FILE id="aiydnN" name="KnobResource.h" compile="0" resource="0" file="Source/KnobResource.h"/>
+    <FILE id="DtHolH" name="WavePanner.h" compile="0" resource="0" file="Source/WavePanner.h"/>
+    <FILE id="tKcriF" name="WaveView.h" compile="0" resource="0" file="Source/WaveView.h"/>
   </MAINGROUP>
   <JUCEOPTIONS JUCE_STRICT_REFCOUNTEDPOINTER="1" JUCE_VST3_CAN_REPLACE_VST2="0"/>
   <EXPORTFORMATS>
-    <VS2015 targetFolder="Builds/VisualStudio2015">
-      <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="WAVE PANNER"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="WAVE PANNER"/>
-      </CONFIGURATIONS>
-      <MODULEPATHS>
-        <MODULEPATH id="juce_audio_basics" path="../../modules"/>
-        <MODULEPATH id="juce_audio_devices" path="../../modules"/>
-        <MODULEPATH id="juce_audio_formats" path="../../modules"/>
-        <MODULEPATH id="juce_audio_plugin_client" path="../../modules"/>
-        <MODULEPATH id="juce_audio_processors" path="../../modules"/>
-        <MODULEPATH id="juce_audio_utils" path="../../modules"/>
-        <MODULEPATH id="juce_core" path="../../modules"/>
-        <MODULEPATH id="juce_data_structures" path="../../modules"/>
-        <MODULEPATH id="juce_events" path="../../modules"/>
-        <MODULEPATH id="juce_graphics" path="../../modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../../modules"/>
-        <MODULEPATH id="juce_gui_extra" path="../../modules"/>
-      </MODULEPATHS>
-    </VS2015>
     <VS2017 targetFolder="Builds/VisualStudio2017">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" targetName="WAVE PANNER"/>
@@ -69,26 +45,6 @@
         <MODULEPATH id="juce_gui_extra" path="../../modules"/>
       </MODULEPATHS>
     </VS2017>
-    <VS2019 targetFolder="Builds/VisualStudio2019">
-      <CONFIGURATIONS>
-        <CONFIGURATION isDebug="1" name="Debug" targetName="WAVE PANNER"/>
-        <CONFIGURATION isDebug="0" name="Release" targetName="WAVE PANNER"/>
-      </CONFIGURATIONS>
-      <MODULEPATHS>
-        <MODULEPATH id="juce_audio_basics" path="../../modules"/>
-        <MODULEPATH id="juce_audio_devices" path="../../modules"/>
-        <MODULEPATH id="juce_audio_formats" path="../../modules"/>
-        <MODULEPATH id="juce_audio_plugin_client" path="../../modules"/>
-        <MODULEPATH id="juce_audio_processors" path="../../modules"/>
-        <MODULEPATH id="juce_audio_utils" path="../../modules"/>
-        <MODULEPATH id="juce_core" path="../../modules"/>
-        <MODULEPATH id="juce_data_structures" path="../../modules"/>
-        <MODULEPATH id="juce_events" path="../../modules"/>
-        <MODULEPATH id="juce_graphics" path="../../modules"/>
-        <MODULEPATH id="juce_gui_basics" path="../../modules"/>
-        <MODULEPATH id="juce_gui_extra" path="../../modules"/>
-      </MODULEPATHS>
-    </VS2019>
     <XCODE_MAC targetFolder="Builds/MacOSX">
       <CONFIGURATIONS>
         <CONFIGURATION isDebug="1" name="Debug" targetName="WAVE PANNER"/>

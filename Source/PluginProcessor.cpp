@@ -11,6 +11,7 @@
 
 //==============================================================================
 WAVEPANNERAudioProcessor::WAVEPANNERAudioProcessor()
+#ifndef JucePlugin_PreferredChannelConfigurations
      : AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
                       #if ! JucePlugin_IsSynth
@@ -18,12 +19,46 @@ WAVEPANNERAudioProcessor::WAVEPANNERAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       )
+                       ),
+#else 
+    :
+#endif
+        parameters(*this, nullptr, juce::Identifier("WAVE PANNER"), // processor, undoManager, valueTreeType, parameterLayout
+        {
+            std::make_unique<juce::AudioParameterFloat>("DEFAULT", "DEFAULT", juce::NormalisableRange<float>(-1.0, 1.0, 0.01), 0.0),
+            std::make_unique<juce::AudioParameterFloat>("SPEED", "SPEED", juce::NormalisableRange<float>(0.1, 4.0, 0.05), 0.5),
+            std::make_unique<juce::AudioParameterFloat>("MIX", "MIX", juce::NormalisableRange<float>(0.0, 100.0, 0.1), 100.0),
+            std::make_unique<juce::AudioParameterFloat>("CURVE", "CURVE", juce::NormalisableRange<float>(0.0, 2.0, 0.1), 1.0),
+            std::make_unique<juce::AudioParameterFloat>("OFFSET", "OFFSET", juce::NormalisableRange<float>(0.0, 1.0, 0.05), 0.0),
+
+        })             
 {
+    defaultParameter = parameters.getRawParameterValue("DEFAULT");
+    speedParameter = parameters.getRawParameterValue("SPEED");
+    mixParameter = parameters.getRawParameterValue("MIX");
+    curveParameter = parameters.getRawParameterValue("CURVE");
+    offsetParameter = parameters.getRawParameterValue("OFFSET");
+    listener = new ParameterListener(*this);
+    parameters.addParameterListener("DEFAULT", listener);
+    parameters.addParameterListener("SPEED", listener);
+    parameters.addParameterListener("MIX", listener);
+    parameters.addParameterListener("CURVE", listener);
+    parameters.addParameterListener("OFFSET", listener);
 }
 
 WAVEPANNERAudioProcessor::~WAVEPANNERAudioProcessor()
 {
+    parameters.removeParameterListener("DEFAULT", listener);
+    parameters.removeParameterListener("SPEED", listener);
+    parameters.removeParameterListener("MIX", listener);
+    parameters.removeParameterListener("CURVE", listener);
+    parameters.removeParameterListener("OFFSET", listener);
+    listener = nullptr;
+    defaultParameter = nullptr;
+    speedParameter = nullptr;
+    mixParameter = nullptr;
+    curveParameter = nullptr;
+    offsetParameter = nullptr;
 }
 
 //==============================================================================
@@ -188,21 +223,30 @@ bool WAVEPANNERAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* WAVEPANNERAudioProcessor::createEditor()
 {
-    return new Editor (*this);
+    return new Editor (*this, parameters);
 }
 
 //==============================================================================
 void WAVEPANNERAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
-    // You should use this method to store your parameters in the memory block.
-    // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.
+    // load from xml
+    auto state = parameters.copyState();
+    std::unique_ptr<juce::XmlElement> xml (state.createXml());
+    copyXmlToBinary (*xml, destData);
 }
 
 void WAVEPANNERAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
+    // save to xml
+    std::unique_ptr<juce::XmlElement> xmlState (getXmlFromBinary (data, sizeInBytes));
+ 
+    if (xmlState.get() != nullptr) 
+    {
+        if (xmlState->hasTagName (parameters.state.getType())) 
+        {
+            parameters.replaceState (juce::ValueTree::fromXml (*xmlState));
+        }
+    }
 }
 
 //==============================================================================

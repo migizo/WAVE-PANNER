@@ -47,9 +47,8 @@ public:
         const double ADJ_STEP = 32.0;
         const int SKIP_STEP = (int)(countMax / (4.0 * ADJ_STEP)); // 処理軽減で調整値*1拍分ごとにpathバッファ保存
 
-        static int iCount = 0;
-        if (iCount == 0) panList.push_front(pan);
-        iCount = (iCount + 1) % SKIP_STEP;
+        if (countForPushPanList == 0) panList.push_front(pan);
+        countForPushPanList = (countForPushPanList + 1) % SKIP_STEP;
 
         if (panList.size() > PATH_RES)panList.resize((int)PATH_RES);
         if (panList.size() < PATH_RES) {
@@ -96,4 +95,5 @@ private:
     double offset = 0.0;
     double destOffset = 0.0;
     double count = 0.0;
+    int countForPushPanList = 0;
 };
