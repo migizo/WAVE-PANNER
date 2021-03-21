@@ -190,7 +190,7 @@ void WAVEPANNERAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
     static bool lastIsPlaying = false;
     bool isPlaying = info.isPlaying;
     if (!lastIsPlaying && isPlaying) {
-        wavePanner.setCount(info.timeInSamples);
+        wavePanner.setCount((int)info.timeInSamples);
     }
     lastIsPlaying = isPlaying;
 
@@ -211,7 +211,8 @@ void WAVEPANNERAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, j
         float* rBuf = buffer.getWritePointer(1);
 
         lBuf[i] *= wavePanner.getLeftVolume();
-        rBuf[i] *= wavePanner.getRightVolume();            
+        rBuf[i] *= wavePanner.getRightVolume();
+        
     }
 }
 

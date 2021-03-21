@@ -37,7 +37,8 @@ public:
         }
         // sin or rect
         else {
-            double rectValue = pow(abs(sinValue), 1.0/(curve*8.0)) * (sinValue < 0.0 ? -1.0 : 1.0);
+            const double ADJ_CURVE = 4.0;
+            double rectValue = pow(abs(sinValue), 1.0/(curve*ADJ_CURVE)) * (sinValue < 0.0 ? -1.0 : 1.0);
             pan = juce::jmap(curve, 1.0, 2.0, sinValue, rectValue);
         }
         pan = juce::jmap(mix, 0.0, 1.0, defaultPan, pan);
