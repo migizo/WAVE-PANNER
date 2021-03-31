@@ -27,7 +27,7 @@
 //[/MiscUserDefs]
 
 //==============================================================================
-Editor::Editor (WAVEPANNERAudioProcessor& p,  juce::AudioProcessorValueTreeState& vts)
+Editor::Editor (WAVEPANNERAudioProcessor& p, juce::AudioProcessorValueTreeState& vts)
     : AudioProcessorEditor(&p), processor(p),valueTreeState(vts)
 {
     //[Constructor_pre] You can add your own custom stuff here..
@@ -86,7 +86,7 @@ Editor::Editor (WAVEPANNERAudioProcessor& p,  juce::AudioProcessorValueTreeState
                              juce::ImageCache::getFromMemory (extendToggle_png, extendToggle_pngSize), 1.000f, juce::Colour (0x00000000),
                              juce::Image(), 1.000f, juce::Colour (0x00000000),
                              juce::Image(), 1.000f, juce::Colour (0x00000000));
-    extendToggle->setBounds (164, 497, 12, 12);
+    extendToggle->setBounds (26, 469, 288, 68);
 
     cachedImage_bg_png_1 = juce::ImageCache::getFromMemory (bg_png, bg_pngSize);
 
@@ -219,7 +219,7 @@ BEGIN_JUCER_METADATA
 
 <JUCER_COMPONENT documentType="Component" className="Editor" componentName=""
                  parentClasses="public juce::AudioProcessorEditor, private juce::Timer"
-                 constructorParams="WAVEPANNERAudioProcessor&amp; p,  juce::AudioProcessorValueTreeState&amp; vts"
+                 constructorParams="WAVEPANNERAudioProcessor&amp; p, juce::AudioProcessorValueTreeState&amp; vts"
                  variableInitialisers="AudioProcessorEditor(&amp;p), processor(p),valueTreeState(vts)&#10;"
                  snapPixels="8" snapActive="1" snapShown="1" overlayOpacity="0.330"
                  fixedSize="1" initialWidth="340" initialHeight="537">
@@ -251,7 +251,7 @@ BEGIN_JUCER_METADATA
           int="0.05" style="Rotary" textBoxPos="TextBoxBelow" textBoxEditable="1"
           textBoxWidth="50" textBoxHeight="16" skewFactor="1.0" needsCallback="0"/>
   <IMAGEBUTTON name="extendToggle" id="a81ff13a8a6c414b" memberName="extendToggle"
-               virtualName="" explicitFocusOrder="0" pos="164 497 12 12" buttonText="new button"
+               virtualName="" explicitFocusOrder="0" pos="26 469 288 68" buttonText="new button"
                connectedEdges="0" needsCallback="1" radioGroupId="0" keepProportions="1"
                resourceNormal="extendToggle_png" opacityNormal="1.0" colourNormal="0"
                resourceOver="" opacityOver="1.0" colourOver="0" resourceDown=""

@@ -18,7 +18,7 @@ public:
     void drawImageButton (juce::Graphics& g, juce::Image* img, int imageX, int imageY, int imageW, int imageH, 
                             const juce::Colour& overlayColour, float imageOpacity, juce::ImageButton& imgButton) override
     {
-        g.setColour (juce::Colours::black);
+        g.setOpacity(imgButton.isOver() ? 0.8 : 1.0);
 
         bool state = imgButton.getToggleState();
         
@@ -31,13 +31,18 @@ public:
             else animator.start(requiredFrame, extendRadian, defaultRadian);
         }
         animator.update();
-        auto centreX = (float) imageW * 0.5f;
-        auto centreY = (float) imageH * 0.5f;
+        imageW = g.getClipBounds().getWidth();
+        imageH = g.getClipBounds().getHeight();
+
+        auto triangleSize = 12;
+        auto centreX = (float) imageW * 0.5f - triangleSize * 0.5f;
+        auto centreY = (float) imageH * 0.5f - triangleSize * 0.5f;
         float angle = animator.getValue();
         if (! animator.getIsInitialized()) angle = 0.0;
 
-        auto transform = juce::AffineTransform::rotation (angle, centreX, centreY);
+        auto transform = juce::AffineTransform::translation(centreX, centreY).rotated(angle, imageW * 0.5f, imageH * 0.5f);
     
+        img->rescaled(triangleSize, triangleSize);
         g.drawImageTransformed (*img, transform);
         
         

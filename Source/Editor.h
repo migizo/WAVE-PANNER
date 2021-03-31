@@ -47,7 +47,7 @@ class Editor  : public juce::AudioProcessorEditor,
 {
 public:
     //==============================================================================
-    Editor (WAVEPANNERAudioProcessor& p,  juce::AudioProcessorValueTreeState& vts);
+    Editor (WAVEPANNERAudioProcessor& p, juce::AudioProcessorValueTreeState& vts);
     ~Editor() override;
 
     //==============================================================================
